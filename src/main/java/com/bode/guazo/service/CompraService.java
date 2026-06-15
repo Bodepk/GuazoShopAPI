@@ -31,6 +31,9 @@ public class CompraService {
     @Autowired
     private CompraProductoRepository cpRepository;
 
+    @Autowired
+    private WhatsAppService whatsAppService;
+
     // ─── Crear compra ─────────────────────────────────────────────────────────
 
     @Transactional
@@ -50,6 +53,9 @@ public class CompraService {
         Compra guardada = compraRepository.save(compra);
         fixIds(guardada, productosCompra);
         descontarStock(productosCompra);
+
+        // Notificar por WhatsApp (no bloquea si falla)
+        whatsAppService.notificarNuevaCompra(guardada);
 
         return guardada;
     }
